@@ -395,6 +395,27 @@ func (m *Matcher) Match(pattern interface{}, fact interface{}, bindings Bindings
 
 // match is a verion of 'Matches' that takes initial bindings (which
 // can be modified).
+//
+// The func match is a method of the Matcher struct in the match.go file of the sheens library, 
+// which is used to perform pattern matching between a given pattern and a given fact using the 
+// specified bindings. The method returns a slice of Bindings that represent the set of all possible 
+// bindings that satisfy the given pattern against the given fact.
+//
+// The method takes three arguments:
+// 1. pattern interface{}: This argument is the pattern that needs to be matched against the fact. 
+// It can be any value of interface{} type, which means it can accept any kind of value.
+//
+// 2. fact interface{}: This argument is the fact against which the pattern needs to be matched. 
+// It can also be any value of interface{} type.
+// 
+// 3. bindings Bindings: This argument represents the set of bindings that should be used during the 
+// matching process. A Bindings is a map-like type that maps variable names to their corresponding 
+// values. It is used to keep track of the values that have been bound to the variables during the 
+// matching process.
+
+// The method returns a slice of Bindings and an error. The slice contains all the bindings that 
+// satisfy the pattern against the fact. The error, if any, contains information about any errors 
+// that occurred during the matching process.
 func (m *Matcher) match(pattern interface{}, fact interface{}, bindings Bindings) ([]Bindings, error) {
 
 	pattern = fudge(pattern)
@@ -410,6 +431,10 @@ func (m *Matcher) match(pattern interface{}, fact interface{}, bindings Bindings
 	f := fact
 	bs := bindings
 
+	// checks if the given pattern and fact are both nil or not. 
+	// If they are both nil, then the method returns an empty slice of Bindings. 
+	// If one of them is nil, then the method returns ...
+	
 	switch vv := p.(type) {
 	case nil:
 		switch f.(type) {
@@ -446,7 +471,11 @@ func (m *Matcher) match(pattern interface{}, fact interface{}, bindings Bindings
 		default:
 			return nil, nil
 		}
-
+// checks if the given pattern is a string or not. If the pattern is a string, 
+// then it checks if it starts with a dollar sign ($). If it does, then it assumes 
+// that the pattern is a variable and tries to bind it with the corresponding value 
+// in the fact. If it doesn't start with a dollar sign, then it assumes that the 
+// pattern is a string and tries to match it with the corresponding string in the fact.
 	case string:
 		if m.IsConstant(vv) {
 			switch f.(type) {
@@ -478,7 +507,9 @@ func (m *Matcher) match(pattern interface{}, fact interface{}, bindings Bindings
 				return []Bindings{bs}, nil
 			}
 		}
-
+// If the given pattern is not a string, then the method checks if it is a map or not. 
+// If it is a map, then it assumes that the pattern represents a sub-pattern and tries 
+// to match it with the corresponding sub-pattern in the fact.
 	case map[string]interface{}:
 		mm, ok := p.(map[string]interface{})
 		if !ok {
